@@ -87,8 +87,9 @@ namespace nndk
             }).Start();
         }
         //计算正常工时
-        public static void CalcNormal(List<List<Record>> lstlst)
+        public static float CalcNormal(List<List<Record>> lstlst)
         {
+            float sum = 0;
             foreach (var lstPersonData in lstlst)    //遍历每个人
             {
                 foreach (var record in lstPersonData)
@@ -96,6 +97,7 @@ namespace nndk
 
                 }
             }
+            return sum;
         }
         //计算加班工时
         public static void CalcOverTime(List<List<Record>> lstlst)
