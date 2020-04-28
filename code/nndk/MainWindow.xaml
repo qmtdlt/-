@@ -1,0 +1,32 @@
+﻿<controls:MetroWindow x:Class="nndk.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:nndk"
+        mc:Ignorable="d"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        GlowBrush="{DynamicResource AccentColorBrush}"
+        Title="鸟鸟打卡工时统计" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <TextBox x:Name="srcFilePath" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" IsEnabled="False" Background="#e6e6e6" Margin="10,10,10,0" Grid.Column="0"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="50*"/>
+            </Grid.ColumnDefinitions>
+            <Button Click="chooseFile" Content="选择文件" Margin="10,10,5,0" Grid.Column="0" Style="{StaticResource AccentedSquareButtonStyle}"/>
+            <Button Click="startExcute" Content="开始计算" Margin="5,10,10,0" Grid.Column="1" Style="{StaticResource AccentedSquareButtonStyle}"/>
+        </Grid>
+        <Grid Grid.Row="2">
+            <controls:ProgressRing IsActive="{Binding isExcuting}" Foreground="{DynamicResource HighlightBrush}" Margin="10,10,722,249"/>
+        </Grid>
+    </Grid>
+</controls:MetroWindow>
