@@ -12,4 +12,10 @@ namespace nndk
         public string name { get; set; }
         public DateTime? time { get; set; }
     }
+    public class Result
+    {
+        public string code { get; set; }
+        public string name { get; set; }
+        public double sum { get; set; }
+    }
 }

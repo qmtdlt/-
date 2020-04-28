@@ -87,17 +87,35 @@ namespace nndk
             }).Start();
         }
         //计算正常工时
-        public static float CalcNormal(List<List<Record>> lstlst)
+        public static List<Result> CalcNormal(List<List<Record>> lstlst)
         {
-            float sum = 0;
+            List<Result> res = new List<Result>();
             foreach (var lstPersonData in lstlst)    //遍历每个人
             {
-                foreach (var record in lstPersonData)
+                double sum = 0;
+                var timeList = lstPersonData.Select(t => t.time.Value.ToString("yyyy-MM-dd")).Distinct().ToList();
+                foreach (var timeStr in timeList)
                 {
+                    var tTime = timeStr.ToDateTime().Value;
+                    int dayOfWeek = (int)tTime.DayOfWeek;
+                    if (dayOfWeek >= 1 && dayOfWeek <= 5)   //周一至周五
+                    {
+                        DateTime? startTime = lstPersonData.Where(t => t.time.Value.ToString("yyyy-MM-dd") == timeStr).Min(t => t.time);
+                        DateTime? endTime = lstPersonData.Where(t => t.time.Value.ToString("yyyy-MM-dd") == timeStr).Max(t => t.time);
 
+                        TimeSpan timeSpan = endTime.Value - startTime.Value;
+
+                        sum += timeSpan.TotalHours;
+                    }
                 }
+                res.Add(new Result
+                {
+                    code = lstPersonData.FirstOrDefault().code,
+                    name = lstPersonData.FirstOrDefault().name,
+                    sum = sum
+                });
             }
-            return sum;
+            return res;
         }
         //计算加班工时
         public static void CalcOverTime(List<List<Record>> lstlst)

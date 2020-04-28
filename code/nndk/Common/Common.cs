@@ -15,9 +15,9 @@ namespace nndk
             return ConfigurationSettings.AppSettings["codes"].ToString();
         }
         //获取时间是星期几
-        public static int GetTimeXq(DateTime dt)
+        public static int? GetTimeXq(DateTime dt)
         {
-            return 1;
+            return dt.DayOfWeek.objToInt();
         }
     }
 }
