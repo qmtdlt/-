@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,6 +20,7 @@ using Microsoft.Win32;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using System.Configuration;
 
 namespace nndk
 {
@@ -55,41 +57,87 @@ namespace nndk
                 this.IsEnabled = true;
                 return;
             }
-            //读excel
-            //循环处理
-            StringBuilder sbr = new StringBuilder();
-            using (FileStream fs = File.OpenRead(srcFilePath.Text))   //打开myxls.xls文件
+            string path = srcFilePath.Text;
+            
+            new Thread(() =>
             {
-                XSSFWorkbook wk = new XSSFWorkbook(fs);   //把xls文件中的数据写入wk中
-                for (int i = 0; i < wk.NumberOfSheets; i++)  //NumberOfSheets是myxls.xls中总共的表数
+                List<Record> resData = ReadExcel(path);
+                List<List<Record>> lstlst = new List<List<Record>>();
+                if (resData != null)
                 {
-                    ISheet sheet = wk.GetSheetAt(i);   //读取当前表数据
-                    for (int j = 0; j <= sheet.LastRowNum; j++)  //LastRowNum 是当前表的总行数
+                    foreach (var code in Common.GetCodes().Split(',').ToList())
                     {
-                        IRow row = sheet.GetRow(j);  //读取当前行数据
-                        if (row != null)
-                        {
-                            sbr.Append("-------------------------------------\r\n"); //读取行与行之间的提示界限
-                            for (int k = 0; k <= row.LastCellNum; k++)  //LastCellNum 是当前行的总列数
-                            {
-                                ICell cell = row.GetCell(k);  //当前表格
-                                if (cell != null)
-                                {
-                                    sbr.Append(cell.ToString());   //获取表格中的数据并转换为字符串类型
-                                }
-                            }
-                        }
+                        lstlst.Add(resData.Where(t => t.code == code).ToList());
+                    }
+                }
+                //lstlst 数据源
+                CalcNormal(lstlst);
+                //周内
+                //周末
+                //加班延点
+                //节假日
+
+
+                this.Dispatcher.Invoke(() =>
+                {
+                    isExcuting.IsActive = false;
+                    this.IsEnabled = true;
+                });
+
+            }).Start();
+        }
+
+        public static void CalcNormal(List<List<Record>> lstlst)
+        {
+            foreach (var lstPersonData in lstlst)    //遍历每个人
+            {
+                foreach (var record in lstPersonData)
+                {
+
+                }
+            }
+        }
+
+        public static List<Record> ReadExcel(string filePaht)
+        {
+            try
+            {
+                FileStream fs = File.OpenRead(filePaht);
+
+                if (filePaht.Contains("xlsx"))
+                    return ReadWorkBook(new XSSFWorkbook(fs));//xlsx
+                else
+                    return ReadWorkBook(new HSSFWorkbook(fs));
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("正由另一进程使用"))
+                {
+                    MessageBox.Show("请关闭打开的文件");
+                }
+                return null;
+            }
+        }
+        public static List<Record> ReadWorkBook(IWorkbook wk)
+        {
+            List<Record> lstData = new List<Record>();
+            ISheet sheet = wk.GetSheetAt(0);    //获取sheet
+            for (int j = 0; j <= sheet.LastRowNum; j++)  //LastRowNum 是当前表的总行数
+            {
+                IRow row = sheet.GetRow(j);  //读取当前行数据
+                if (row != null)
+                {
+                    Record tperson = new Record();
+                    tperson.code = row.GetCell(1)?.StringCellValue;
+                    tperson.name = row.GetCell(2)?.StringCellValue;
+                    tperson.time = row.GetCell(3)?.StringCellValue.ToDateTime();
+                    if (!string.IsNullOrEmpty(tperson.code) && !string.IsNullOrEmpty(tperson.name) && tperson.time != null)
+                    {
+                        lstData.Add(tperson);
                     }
                 }
             }
-            sbr.ToString();
-            using (StreamWriter wr = new StreamWriter(new FileStream(@"E:/myText.txt", FileMode.Append)))  //把读取xls文件的数据写入myText.txt文件中
-            {
-                wr.Write(sbr.ToString());
-                wr.Flush();
-            }
-            isExcuting.IsActive = false;
-            this.IsEnabled = true;
+            return lstData;
         }
     }
 }

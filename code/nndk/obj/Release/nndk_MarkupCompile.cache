@@ -4,11 +4,11 @@
 winexe
 C#
 .cs
-C:\Users\zh\Source\Repos\PunchSstatistics\code\nndk\obj\Debug\
+C:\Users\zh\Source\Repos\PunchSstatistics\code\nndk\obj\Release\
 nndk
 none
 false
-DEBUG;TRACE
+TRACE
 C:\Users\zh\Source\Repos\PunchSstatistics\code\nndk\App.xaml
 11151548125
 
@@ -16,5 +16,5 @@ C:\Users\zh\Source\Repos\PunchSstatistics\code\nndk\App.xaml
 22477534934
 MainWindow.xaml;
 
-False
+True
 
