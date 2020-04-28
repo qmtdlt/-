@@ -26,7 +26,7 @@
             <Button Click="startExcute" Content="开始计算" Margin="5,10,10,0" Grid.Column="1" Style="{StaticResource AccentedSquareButtonStyle}"/>
         </Grid>
         <Grid Grid.Row="2">
-            <controls:ProgressRing IsActive="{Binding isExcuting}" Foreground="{DynamicResource HighlightBrush}" Margin="10,10,722,249"/>
+            <controls:ProgressRing x:Name="isExcuting" Foreground="{DynamicResource HighlightBrush}" Margin="10,10,722,249"/>
         </Grid>
     </Grid>
 </controls:MetroWindow>

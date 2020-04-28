@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,9 +30,8 @@ namespace nndk
         public MainWindow()
         {
             InitializeComponent();
-            isExcuting = false;
+            isExcuting.IsActive = false;
         }
-        public bool isExcuting { get; set; }
 
         private void chooseFile(object sender, RoutedEventArgs e)
         {
@@ -45,9 +45,14 @@ namespace nndk
 
         private void startExcute(object sender, RoutedEventArgs e)
         {
-            isExcuting = true;
+            this.IsEnabled = false;
+            isExcuting.IsActive = true;
+
             if (string.IsNullOrEmpty(srcFilePath.Text))
             {
+                MessageBox.Show("请先选择一个文件");
+                isExcuting.IsActive = false;
+                this.IsEnabled = true;
                 return;
             }
             //读excel
@@ -83,7 +88,8 @@ namespace nndk
                 wr.Write(sbr.ToString());
                 wr.Flush();
             }
-            MessageBox.Show("处理完成！");
+            isExcuting.IsActive = false;
+            this.IsEnabled = true;
         }
     }
 }
